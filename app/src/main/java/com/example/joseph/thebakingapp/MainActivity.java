@@ -1,13 +1,15 @@
 package com.example.joseph.thebakingapp;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements BakingAdapter.ListItemClickListener{
 
     private RecyclerView mRecyclerView;
     private LinearLayoutManager layoutManager;
@@ -65,8 +67,18 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(layoutManager);
 
         // View holder objects are managed by an adapter. The adapter creates view holders as needed.
-        mAdapter = new BakingAdapter(this,R.layout.list_item,periodicTable);
+        mAdapter = new BakingAdapter(this,R.layout.list_item,periodicTable,this);
 
         mRecyclerView.setAdapter(mAdapter);
+
+
+    }
+
+    @Override
+    public void onListItemClick(int clickedItemIndex) {
+        Intent intent = new Intent(MainActivity.this, ContentActivity.class);
+        startActivity(intent);
+
+
     }
 }
