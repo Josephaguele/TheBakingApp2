@@ -1,20 +1,27 @@
 package com.example.joseph.thebakingapp;
 
+import android.app.LoaderManager;
+import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import android.content.Loader;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements BakingAdapter.ListItemClickListener{
+import static com.example.joseph.thebakingapp.QueryUtils.BASEURL;
 
+public class MainActivity extends AppCompatActivity implements
+        BakingAdapter.ListItemClickListener,
+        LoaderCallbacks<List<Baking>> {
+
+    private static final String TAG = "MainActivity";
     private RecyclerView mRecyclerView;
     private LinearLayoutManager layoutManager;
     private BakingAdapter mAdapter;
-
 
 
     @Override
@@ -22,41 +29,10 @@ public class MainActivity extends AppCompatActivity implements BakingAdapter.Lis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Create an ArrayList of periodicTable
-        final ArrayList<String> periodicTable = new ArrayList<>();
-        periodicTable.add("Hydrogen");
-        periodicTable.add("Helium");
-        periodicTable.add("Lithium");
-        periodicTable.add("Berrylium");
-        periodicTable.add("Boron");
-        periodicTable.add("Carbon");
-        periodicTable.add("Nitrogen");
-        periodicTable.add("Oxygen");
-        periodicTable.add("Flourine");
-        periodicTable.add("Neon");
-        periodicTable.add("Sodium");
-        periodicTable.add("Magnesium");
-        periodicTable.add("Aluminium");
-        periodicTable.add("Silicon");
-        periodicTable.add("Phosphorus");
-        periodicTable.add("Sulphur");
-        periodicTable.add("Chlorine");
-        periodicTable.add("Argon");
-        periodicTable.add("Potassium");
-        periodicTable.add("Calcium");
-        periodicTable.add("Scandium");
-        periodicTable.add("Titanium");
-        periodicTable.add("Vanadium");
-        periodicTable.add("Chromium");
-        periodicTable.add("Maganese");
-        periodicTable.add("Iron");
-        periodicTable.add("Cobalt");
-        periodicTable.add("Nickel");
-        periodicTable.add("Copper");
-        periodicTable.add("Zinc");
+        // calling the Baking objects
+        ArrayList<Baking> bakings = new ArrayList<>();
 
-
-        mRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
         // This is used to improve performance, since changes in content do not change the
         // layout size of the RecyclerView.
@@ -67,18 +43,45 @@ public class MainActivity extends AppCompatActivity implements BakingAdapter.Lis
         mRecyclerView.setLayoutManager(layoutManager);
 
         // View holder objects are managed by an adapter. The adapter creates view holders as needed.
-        mAdapter = new BakingAdapter(this,R.layout.list_item,periodicTable,this);
+        mAdapter = new BakingAdapter(this, bakings, this);
 
         mRecyclerView.setAdapter(mAdapter);
 
+        LoaderManager loaderManager = getLoaderManager();
+        // for calling the LoaderManager in the AsyncTaskLoader class.
+        loaderManager.initLoader(1, null, this).forceLoad();
 
     }
+
 
     @Override
     public void onListItemClick(int clickedItemIndex) {
         Intent intent = new Intent(MainActivity.this, ContentActivity.class);
         startActivity(intent);
-
-
     }
+
+    // These methods are called automatically when you implement the LoaderCallbacks interface
+    @Override
+    public Loader<List<Baking>> onCreateLoader(int id, Bundle args) {
+        return new BakingLoader(this, BASEURL);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Baking>> loader, List<Baking> data) {
+
+        if (data != null && !data.isEmpty()) {
+           /*
+           i tested that the json data is generated properly and comes up by making sure that the generated data appears has a toast message
+           String d = data.toString();
+            Toast.makeText(this,"Data not empty",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, d,Toast.LENGTH_LONG).show();*/
+            mAdapter.setBaking((ArrayList<Baking>) data);
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<Baking>> loader) {
+    }
+
+
 }
