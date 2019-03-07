@@ -54,11 +54,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
-    @Override
-    public void onListItemClick(int clickedItemIndex) {
-        Intent intent = new Intent(MainActivity.this, ContentActivity.class);
-        startActivity(intent);
-    }
+
 
     // These methods are called automatically when you implement the LoaderCallbacks interface
     @Override
@@ -84,4 +80,10 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
+    @Override
+    public void onListItemClick(Baking clickedItemIndex) {
+
+        Intent intent = new Intent(this,IngredientsActivity.class);
+        startActivity(intent);
+    }
 }

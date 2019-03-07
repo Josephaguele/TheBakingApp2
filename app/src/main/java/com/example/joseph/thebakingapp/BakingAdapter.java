@@ -54,8 +54,8 @@ public class BakingAdapter extends RecyclerView.Adapter<BakingAdapter.BakingView
 
         // TODO: This is another method of binding data instead of using the bindData(position) method
         // bind data
-      // holder.idTextView.setText(mBakings.get(position).getmId());
-       //holder.nameTextView.setText(mBakings.get(position).getmName())
+        // holder.idTextView.setText(mBakings.get(position).getmId());
+        //holder.nameTextView.setText(mBakings.get(position).getmName())
     }
 
     @Override
@@ -72,7 +72,7 @@ public class BakingAdapter extends RecyclerView.Adapter<BakingAdapter.BakingView
 
     // adding an interface that receives onClick messages called ListItemClickListener
     public interface ListItemClickListener {
-        void onListItemClick(int clickedItemIndex);
+        void onListItemClick(Baking  clickedItemIndex);
     }
 
 
@@ -102,7 +102,8 @@ public class BakingAdapter extends RecyclerView.Adapter<BakingAdapter.BakingView
         @Override
         public void onClick(View v) {
             int clickedPosition = getAdapterPosition();
-            mOnClickListener.onListItemClick(clickedPosition);
+            Baking clickeditem = mBakings.get(clickedPosition);
+            mOnClickListener.onListItemClick(clickeditem);
         }
     }
 }

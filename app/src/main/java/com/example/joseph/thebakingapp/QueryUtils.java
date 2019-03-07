@@ -18,9 +18,13 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
 public class QueryUtils {
 
     final static String BASEURL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
+    private static String ID = "id";
+    private static String NAME = "name";
 
     // Tag for the log messages
     private static final String TAG = QueryUtils.class.getSimpleName();
@@ -137,8 +141,8 @@ public class QueryUtils {
             JSONArray rootJSON = new JSONArray(bakingJSON);
             for(int i = 0; i< rootJSON.length(); i++){
                 JSONObject root2 = rootJSON.optJSONObject(i);
-                int fId = root2.optInt("id");
-                String foodName = root2.optString("name");
+                int fId = root2.optInt(ID);
+                String foodName = root2.optString(NAME);
 
                 // since the result of id is in integers, this converts food id back to a string value
                 String foodId = Integer.toString(fId);
@@ -154,5 +158,92 @@ public class QueryUtils {
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /*
+    * Query Utils for ingredients activities and json parsing*/
+    // Query the website dataset and return a list of ingredients array objects
+    public static List<Ingredients> fetchIngredientsData(String requestUrl) {
+
+        // Create URL Object
+        Log.i(TAG, "Creating URL Object to fetch ingredients data");
+
+        URL url = createUrl(requestUrl);
+
+        // Perform HTTP request to the URL and receive a JSON response back
+        String jsonResponse = null;
+        try {
+            jsonResponse = makeHttpRequest(url);
+        } catch (IOException e) {
+            Log.e(TAG, "Problem making the HTTP request", e);
+        }
+
+        // Extract relevant fields from the JSON response and create a list of ingredients
+
+        List<Ingredients> foodIngredients = extractIngredientsFromJsonResponse( jsonResponse);
+        return foodIngredients;
+
+    }
+
+    private static List<Ingredients> extractIngredientsFromJsonResponse(String ingredientJson) {
+
+        // IF the JSON string is empty or null, then return early
+        if (TextUtils.isEmpty(ingredientJson)) {
+            return null;
+        }
+
+        List<Ingredients> ing = new ArrayList<>();
+        // Try to parse the JSON response string. If there's a problem with the way the JSON
+        // is formatted, a JSONException exception object will be thrown.
+        // Catch the exception so the app doesn't crash, and print the error message to the logs.
+
+
+        try {
+            // Create a JSONObject from the JSON response string
+            JSONArray rootJSON = new JSONArray(ingredientJson);
+            for (int i = 0; i < rootJSON.length(); i++) {
+                JSONObject root2 = rootJSON.optJSONObject(i);
+                int fId = root2.optInt(ID);
+                String foodName = root2.optString(NAME);
+
+                // going deeper into the JSON parsing
+                JSONArray ingredientsArray = root2.optJSONArray("ingredients");
+                for (int iArray = 0; i < ingredientsArray.length(); iArray++) {
+                    JSONObject root4 = ingredientsArray.optJSONObject(iArray);
+                    int foodQuantity = root4.optInt("quantity");
+                    String foodMeasure = root4.optString("measure");
+                    String foodIngredient = root4.optString("ingredient");
+                    // since the result of id is in integers, this converts food id back to a string value
+                    String foodId = Integer.toString(fId);
+                    // conversion of foodquantity from integer to String
+                    String quantity = Integer.toString(foodQuantity);
+
+                    Ingredients ingredient = new Ingredients(quantity, foodMeasure, foodIngredient,foodName);
+                    ing.add(ingredient);
+                }
+
+            }
+        } catch (JSONException e) {
+            Log.e("QueryUtils", "Problem parsing the JSON result", e);
+        }
+        return  ing;
+    }
 
 }

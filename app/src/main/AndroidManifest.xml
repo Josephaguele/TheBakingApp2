@@ -19,8 +19,8 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ContentActivity"
-            android:label="Content"/>
+        <activity android:name=".IngredientsActivity"
+            android:label="Ingredients"/>
     </application>
 
 </manifest>
