@@ -3,6 +3,9 @@ package com.example.joseph.thebakingapp;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.example.joseph.thebakingapp.ingredients.Ingredients;
+import com.example.joseph.thebakingapp.main.Baking;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,9 +25,10 @@ import java.util.List;
 
 public class QueryUtils {
 
-    final static String BASEURL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
+    public final static String BASEURL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
     private static String ID = "id";
     private static String NAME = "name";
+    private static String SERVINGS = "servings";
 
     // Tag for the log messages
     private static final String TAG = QueryUtils.class.getSimpleName();
@@ -46,6 +50,7 @@ public class QueryUtils {
             Log.e(TAG, "Problem making the HTTP request", e);
         }
 
+        Log.i(TAG, "Now about to extract features from json");
         // Extract relevant fields from the JSON response and create a list of bakingDetails
         List<Baking> bakingDetails = extractFeatureFromJson(jsonResponse);
 
@@ -143,12 +148,16 @@ public class QueryUtils {
                 JSONObject root2 = rootJSON.optJSONObject(i);
                 int fId = root2.optInt(ID);
                 String foodName = root2.optString(NAME);
+                int servings = root2.optInt("servings");
 
                 // since the result of id is in integers, this converts food id back to a string value
                 String foodId = Integer.toString(fId);
+                String fServings = Integer.toString(servings);
 
-                Baking bakingList = new Baking(foodId,foodName);
+                Baking bakingList = new Baking(foodId,foodName,fServings);
                 bakings.add(bakingList);
+                Log.i("QueryUtils2",bakingList.toString());
+
             }
         } catch (JSONException e) {
             Log.e("QueryUtils", "Problem parsing the JSON result",e);
@@ -196,6 +205,7 @@ public class QueryUtils {
         }
 
         // Extract relevant fields from the JSON response and create a list of ingredients
+        Log.i(TAG, "Now about to extract ingredients from json");
 
         List<Ingredients> foodIngredients = extractIngredientsFromJsonResponse( jsonResponse);
         return foodIngredients;
@@ -235,8 +245,9 @@ public class QueryUtils {
                     // conversion of foodquantity from integer to String
                     String quantity = Integer.toString(foodQuantity);
 
-                    Ingredients ingredient = new Ingredients(quantity, foodMeasure, foodIngredient,foodName);
-                    ing.add(ingredient);
+                    Ingredients ingredientList = new Ingredients(quantity, foodMeasure, foodIngredient,foodName);
+                    ing.add(ingredientList);
+                    Log.i("Ingredients Checks",ingredientList.toString());
                 }
 
             }

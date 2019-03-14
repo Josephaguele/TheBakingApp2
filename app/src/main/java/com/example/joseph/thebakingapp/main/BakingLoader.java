@@ -1,9 +1,11 @@
-package com.example.joseph.thebakingapp;
+package com.example.joseph.thebakingapp.main;
 
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.util.Log;
+
+import com.example.joseph.thebakingapp.QueryUtils;
 
 import java.util.List;
 
@@ -37,6 +39,7 @@ public class BakingLoader extends AsyncTaskLoader<List<Baking>> {
         }
         // Perform the network request, parse the response, and extract a list of bakings
         List<Baking> bakings = QueryUtils.fetchBakingData(mUrl);
+        Log.i(LOG_TAG,bakings.toString());
         return bakings;
         // load in background works like the AsyncTask doInBackground method.
 
